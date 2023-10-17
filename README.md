@@ -9,6 +9,6 @@ While both the `aws-sam-cli` and `cdk` offer `init` commands, oftentimes develop
 
 This CLI generates an application for you that has both configured and initialized to enable faster development.
 
-### Get Started
+### Usage
 
-`npx cdk-sam-init`
+`npx cdk-sam-init --name APP_NAME`
