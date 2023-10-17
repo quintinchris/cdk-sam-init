@@ -1,0 +1,23 @@
+{
+  "name": "cdk-sam-init",
+  "version": "0.0.1",
+  "description": "CLI to generate a SAM & CDK app",
+  "main": "cli.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quintinchris/cdk-sam-init.git"
+  },
+  "keywords": ["cdk", "sam", "aws"],
+  "author": "quintinchris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quintinchris/cdk-sam-init/issues"
+  },
+  "homepage": "https://github.com/quintinchris/cdk-sam-init#readme",
+  "dependencies": {
+    "typescript": "^5.2.2"
+  }
+}
