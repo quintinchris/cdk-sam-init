@@ -1,12 +1,13 @@
 {
   "name": "template",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "bin": {
     "template": "bin/template.js"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
+    "build-template": "cdk synth TemplateApi --profile default --no-staging --no-version-reporting --path-metadata false > template.yaml",
     "test": "jest",
     "cdk": "cdk"
   },
