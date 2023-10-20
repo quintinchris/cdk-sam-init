@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "build-template": "cdk synth TemplateApi --profile default --no-staging --no-version-reporting --path-metadata false > template.yaml",
+    "build-template": "cdk synth --profile default --no-staging --no-version-reporting --path-metadata false > template.yaml",
     "test": "jest",
     "cdk": "cdk"
   },

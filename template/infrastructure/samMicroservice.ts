@@ -124,7 +124,7 @@ export class SamMicroservice extends Construct {
     private createOpenApiDefinitionBody = (handlers: Handler[]) => {
         return {
             openapi: "3.0.0",
-            info: { title: name },
+            info: { title: this.api.name },
             schemes: "https",
             servers: {
                 variables: {
