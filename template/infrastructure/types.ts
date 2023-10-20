@@ -1,5 +1,3 @@
-import * as cdk from "aws-cdk-lib";
-import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sam from "aws-cdk-lib/aws-sam";
 
@@ -8,15 +6,13 @@ export interface DefinitionBodyPath {
 }
 
 export interface SamMicroserviceProps {
-    name: string;
     handlers: Handler[];
-    apiGateway: sam.CfnApiProps;
-    // apiGateway: {
-    //     logLevel: apigw.MethodLoggingLevel;
-    //     cacheTtl: number;
-    // };
+    apiGateway: SamApiProps;
     // envVariables?: Record<string, string>;
 }
+
+export type SamApiProps = Required<Pick<sam.CfnApiProps, "name">> &
+    Partial<Omit<sam.CfnApiProps, "name">>;
 
 export interface Handler {
     name: string;
