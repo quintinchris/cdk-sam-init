@@ -12,7 +12,8 @@ import {
     SamMicroserviceProps,
 } from "./types";
 
-export const RUNTIME = Runtime["NODEJS_18_X"].toString();
+const RUNTIME = Runtime["NODEJS_18_X"].toString();
+const HANDLER_PATH_FROM_ROOT = "build/src/handlers/";
 
 export class SamMicroservice extends Construct {
     public readonly api: sam.CfnApi;
@@ -53,7 +54,7 @@ export class SamMicroservice extends Construct {
             runtime: RUNTIME,
             handler: `${name}.handler`,
             tracing: Tracing.ACTIVE,
-            codeUri: `build/${name}`,
+            codeUri: `${HANDLER_PATH_FROM_ROOT}${name}`,
             events: {
                 [name]: {
                     type: "Api",

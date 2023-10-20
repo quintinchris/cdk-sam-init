@@ -87,7 +87,7 @@ Resources:
   SamMicroserviceTemplatehelloWorld0A2D0603:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: build/helloWorld
+      CodeUri: build/src/handlers/helloWorld
       Events:
         helloWorld:
           Properties:

@@ -5,9 +5,12 @@
     "template": "bin/template.js"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "start": "sam local start-api",
+    "prebuild": "rm -rf build",
+    "build": "tsc && sam build",
     "build-template": "cdk synth --profile default --no-staging --no-version-reporting --path-metadata false > template.yaml",
+    "build-all": "npm run build-template && npm run build",
+    "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
   },

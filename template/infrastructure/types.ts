@@ -1,4 +1,3 @@
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sam from "aws-cdk-lib/aws-sam";
 
 export interface DefinitionBodyPath {
@@ -22,7 +21,3 @@ export interface Handler {
     authorizer?: string;
     environmentVariables?: Record<string, string>;
 }
-
-export const RUNTIMES = lambda.Runtime;
-
-export const TRACING = lambda.Tracing;
