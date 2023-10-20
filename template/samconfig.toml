@@ -4,7 +4,6 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "template"
 
 [default.build.parameters]
 cached = true

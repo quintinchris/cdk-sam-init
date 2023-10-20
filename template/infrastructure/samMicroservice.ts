@@ -11,6 +11,7 @@ import {
     SamApiProps,
     SamMicroserviceProps,
 } from "./types";
+import { CfnResource } from "aws-cdk-lib";
 
 const RUNTIME = Runtime["NODEJS_18_X"].toString();
 const HANDLER_PATH_FROM_ROOT = "build/src/handlers/";
@@ -18,8 +19,8 @@ const HANDLER_PATH_FROM_ROOT = "build/src/handlers/";
 export class SamMicroservice extends Construct {
     public readonly api: sam.CfnApi;
     public readonly lambdas: sam.CfnFunction[];
-    private REGION: string;
-    private ACCOUNT_ID: string;
+    private readonly REGION: string;
+    private readonly ACCOUNT_ID: string;
 
     constructor(
         scope: Construct,
@@ -31,10 +32,8 @@ export class SamMicroservice extends Construct {
         this.ACCOUNT_ID = cdk.Stack.of(this).account;
 
         this.api = this.createApi(apiGateway);
-
-        this.lambdas = handlers.map((handler) => this.createLambda(handler));
-
         this.api.definitionBody = this.createOpenApiDefinitionBody(handlers);
+        this.lambdas = handlers.map((handler) => this.createLambda(handler));
 
         new cdk.CfnOutput(this, "API Gateway Url", {
             value: this.createOutputUrl(),
@@ -67,10 +66,14 @@ export class SamMicroservice extends Construct {
             },
         });
 
+        (lambda as CfnResource).overrideLogicalId(name);
+
         const logGroup = new logs.CfnLogGroup(this, `${name}LogGroup`, {
             logGroupName: `${name}LogGroup`,
             retentionInDays: RetentionDays.ONE_MONTH,
         });
+
+        (logGroup as CfnResource).overrideLogicalId(`${name}LogGroup`);
 
         this.api.addDependency(lambda);
 
@@ -89,7 +92,7 @@ export class SamMicroservice extends Construct {
         tracingEnabled = true,
         ...rest
     }: SamApiProps) => {
-        return new sam.CfnApi(this, name, {
+        const api = new sam.CfnApi(this, name, {
             tracingEnabled,
             stageName,
             auth: {
@@ -120,6 +123,9 @@ export class SamMicroservice extends Construct {
             ],
             ...rest,
         });
+
+        (api as CfnResource).overrideLogicalId(name);
+        return api;
     };
 
     private createOpenApiDefinitionBody = (handlers: Handler[]) => {
@@ -154,23 +160,25 @@ export class SamMicroservice extends Construct {
      * @param handlers The Handlers in the API to create path in template for
      */
     private generateLambdaPaths = (handlers: Handler[]) => {
-        return handlers.map((handler) => {
-            return {
-                [handler.path]: {
-                    [handler.httpMethod.toLowerCase()]: {
-                        operationId: handler.name,
-                        "x-amazon-apigateway-integration": {
-                            type: "aws_proxy",
-                            httpMethod: handler.httpMethod.toUpperCase(),
-                            passthroughBehavior: "never",
-                            uri: this.generateLambdaUri(handler.name),
-                        },
-                        "x-amazon-apigateway-request-validator": "all",
+        const paths = new Map();
+
+        handlers.forEach((handler) => {
+            paths.set(handler.path, {
+                [handler.httpMethod.toLowerCase()]: {
+                    operationId: handler.name,
+                    "x-amazon-apigateway-integration": {
+                        type: "aws_proxy",
+                        httpMethod: handler.httpMethod.toUpperCase(),
+                        passthroughBehavior: "never",
+                        uri: this.generateLambdaUri(handler.name),
                     },
-                    ...this.OPTIONS_PATH,
+                    "x-amazon-apigateway-request-validator": "all",
                 },
-            };
+                ...this.OPTIONS_PATH,
+            });
         });
+
+        return Object.fromEntries(paths);
     };
 
     /**

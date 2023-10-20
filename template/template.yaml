@@ -2,7 +2,7 @@ Transform:
   - AWS::Serverless-2016-10-31
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  SamMicroserviceTemplateSamMicroserviceAB14B6B8:
+  SamMicroservice:
     Type: AWS::Serverless::Api
     Properties:
       AccessLogSetting:
@@ -32,47 +32,47 @@ Resources:
                 - execute-api:Invoke
               Resource: execute-api:/*
         paths:
-          - /hello:
-              get:
-                operationId: helloWorld
-                x-amazon-apigateway-integration:
-                  type: aws_proxy
-                  httpMethod: GET
-                  passthroughBehavior: never
-                  uri:
-                    Fn::Join:
-                      - ""
-                      - - "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:"
-                        - Ref: AWS::Region
-                        - ":"
-                        - Ref: AWS::AccountId
-                        - :function:helloWorld/invocations
-                x-amazon-apigateway-request-validator: all
-              options:
-                consumes:
-                  - application/json
-                produces:
-                  - application/json
+          /hello:
+            get:
+              operationId: helloWorld
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: GET
+                passthroughBehavior: never
+                uri:
+                  Fn::Join:
+                    - ""
+                    - - "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:"
+                      - Ref: AWS::Region
+                      - ":"
+                      - Ref: AWS::AccountId
+                      - :function:helloWorld/invocations
+              x-amazon-apigateway-request-validator: all
+            options:
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              responses:
+                "200":
+                  description: Ok
+                  headers:
+                    Access-Control-Allow-Origin: "'*'"
+                    Access-Control-Allow-Headers: "'*'"
+                    Access-Control-Allow-Credentials: "'*'"
+              x-amazon-apigateway-integration:
+                type: mock
+                contentHandling: CONVERT_TO_TEXT
+                passthroughBehavior: never
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
                 responses:
-                  "200":
-                    description: Ok
-                    headers:
-                      Access-Control-Allow-Origin: "'*'"
-                      Access-Control-Allow-Headers: "'*'"
-                      Access-Control-Allow-Credentials: "'*'"
-                x-amazon-apigateway-integration:
-                  type: mock
-                  contentHandling: CONVERT_TO_TEXT
-                  passthroughBehavior: never
-                  requestTemplates:
-                    application/json: '{"statusCode": 200}'
-                  responses:
-                    default:
-                      statusCode: 200
-                      responseParameters:
-                        method.response.header.Access-Control-Allow-Headers: "'*'"
-                        method.response.header.Access-Control-Allow-Origin: "'*'"
-                        method.response.header.Access-Control-Allow-Credentials: "'*'"
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Headers: "'*'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                      method.response.header.Access-Control-Allow-Credentials: "'*'"
       MethodSettings:
         - CachingEnabled: false
           DataTraceEnabled: true
@@ -83,8 +83,8 @@ Resources:
       StageName: prod
       TracingEnabled: true
     DependsOn:
-      - SamMicroserviceTemplatehelloWorld0A2D0603
-  SamMicroserviceTemplatehelloWorld0A2D0603:
+      - helloWorld
+  helloWorld:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: build/src/handlers/helloWorld
@@ -94,13 +94,13 @@ Resources:
             Method: get
             Path: /hello
             RestApiId:
-              Ref: SamMicroserviceTemplateSamMicroserviceAB14B6B8
+              Ref: SamMicroservice
           Type: Api
       FunctionName: helloWorld
       Handler: helloWorld.handler
       Runtime: nodejs18.x
       Tracing: Active
-  SamMicroserviceTemplatehelloWorldLogGroup4C95C77F:
+  helloWorldLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: helloWorldLogGroup
@@ -112,7 +112,7 @@ Outputs:
       Fn::Join:
         - ""
         - - https://
-          - Ref: SamMicroserviceTemplateSamMicroserviceAB14B6B8
+          - Ref: SamMicroservice
           - .execute-api.
           - Ref: AWS::Region
           - .amazonaws.com/prod
