@@ -1,17 +1,18 @@
 {
     "name": "cdk-sam-init",
-    "version": "0.0.1",
+    "version": "0.0.6",
     "author": "quintinchris",
     "license": "MIT",
     "homepage": "https://github.com/quintinchris/cdk-sam-init#readme",
-    "type": "commonjs",
+    "type": "module",
     "description": "CLI to generate a SAM & CDK app",
     "main": "build/cli.js",
     "bin": {
-        "cdk-sam-init": "dist/cli.js"
+        "cdk-sam-init": "build/cli.js"
     },
     "scripts": {
-        "start": "ts-node cli.ts",
+        "start": "ts-node src/cli.ts",
+        "prebuild": "rm -rf build",
         "build": "tsc"
     },
     "repository": {
